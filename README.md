@@ -1,2 +1,2 @@
 # tools
-useful utility or tools of python
+useful utilities or tools of python
