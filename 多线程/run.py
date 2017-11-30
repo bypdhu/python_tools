@@ -19,16 +19,15 @@ def PoolExecutor(*args, **kwargs):
     success_times = 0
     fail_times = 0
     pool_executor = futures.ProcessPoolExecutor
-    if kwargs.get('pool_type') == 'process':
+    if kwargs.get('pool_type', None) == 'process':
         pass
-    elif kwargs.get('pool_type') == 'thread':
+    elif kwargs.get('pool_type', None) == 'thread':
         pool_executor = futures.ThreadPoolExecutor
 
     max_workers = kwargs.get('max_workers', None)
     # max_workers = int(max_workers) if max_workers else None
 
-    run_times = kwargs.get('run_times_per_worker', 1)
-    run_times2 = max_workers if max_workers else 4
+    run_times_per_worker = kwargs.get('run_times_per_worker', 1)
 
     job_args = list(kwargs.get('job_args', []))
 
@@ -121,7 +120,7 @@ if __name__ == "__main__":
     exec_dict = {
         # 'pool_type': 'thread',
         'pool_type': 'process',
-        'max_workers': 8,
+        'max_workers': 6,
         'run_times_per_worker': 4,
         'job_name': test_get_url,
         'job_args': list_many
