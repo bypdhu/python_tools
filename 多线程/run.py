@@ -33,6 +33,9 @@ def PoolExecutor(*args, **kwargs):
 
     start_time = datetime.datetime.now()
 
+    all_execute_time = 0
+    success_execute_time = 0
+
     with pool_executor(max_workers=max_workers) as executor:
         executor_dict = dict((executor.submit(kwargs.get('job_name'), *(job_args[times])), times+1)
                              for times in range(len(job_args)))
@@ -42,12 +45,13 @@ def PoolExecutor(*args, **kwargs):
             if future.exception() is not None:
                 print('times: %s, generated an exception: %s, args: %s' % (times, future.exception(), job_args[times-1]))
                 fail_times += 1
-            elif future.result()[2] != 200:
+            elif not future.result()[2]:
                 print('times: %s, has an failed result: %s, args: %s' % (times, future.result(), job_args[times-1]))
                 fail_times += 1
             else:
                 print("times: %s, success. args: %s, res: %s" % (times, job_args[times-1], future.result()))
                 success_times += 1
+                success_execute_time += future.result()[1][0] * 1000 * 1000 + future.result()[1][1]
             all_times += 1
 
         future = executor.submit(kwargs.get('job_name'), "sds")
@@ -56,8 +60,10 @@ def PoolExecutor(*args, **kwargs):
         print('success times: %s' % success_times)
         print('fail times: %s' % fail_times)
 
+        print('average success job execute time: %s microseconds' % (success_execute_time/success_times))
+
     end_time = datetime.datetime.now()
-    print("execute time: %s" % (end_time-start_time).seconds)
+    print("all job execute time: %s seconds" % (end_time-start_time).seconds)
 
 
 def PoolExecutor2(*args, **kwargs):
@@ -116,14 +122,15 @@ def ProcessExecutor(*args, **kwargs):
 if __name__ == "__main__":
 
     list_size = 10000
-    list_many = [[1, i] for i in range(list_size)]
+    list_many_of_args = [['arg1', i+1] for i in range(list_size)]
     exec_dict = {
         # 'pool_type': 'thread',
         'pool_type': 'process',
-        'max_workers': 6,
+        'max_workers': 1,
         'run_times_per_worker': 4,
         'job_name': test_get_url,
-        'job_args': list_many
+        # 'job_name': testjob,
+        'job_args': list_many_of_args
     }
     PoolExecutor(**exec_dict)
     # ThreadExecutor(**exec_dict)
