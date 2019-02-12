@@ -2,7 +2,7 @@
 
 import datetime
 
-from jobs import testjob, test_get_url
+from jobs import test_job, test_get_url
 import concurrent.futures as futures
 
 
@@ -31,8 +31,8 @@ def PoolExecutor(*args, **kwargs):
         for future in futures.as_completed(executor_dict):
             times = executor_dict[future]
             if future.exception() is not None:
-                print(
-                'times: %s, generated an exception: %s, args: %s' % (times, future.exception(), job_args[times - 1]))
+                print('times: %s, generated an exception: %s, args: %s'
+                      % (times, future.exception(), job_args[times - 1]))
                 fail_times += 1
             elif not future.result()[2]:
                 print('times: %s, has an failed result: %s, args: %s' % (times, future.result(), job_args[times - 1]))
@@ -55,7 +55,7 @@ def PoolExecutor(*args, **kwargs):
     print("all job execute time: %s seconds" % (end_time - start_time).seconds)
 
 
-if __name__ == "__main__":
+def run_job_with_pool_executor():
     list_size = 10000
     list_many_of_args = [['arg1', i + 1] for i in range(list_size)]
     exec_dict = {
@@ -64,7 +64,11 @@ if __name__ == "__main__":
         'max_workers': 1,
         'run_times_per_worker': 4,
         'job_name': test_get_url,
-        # 'job_name': testjob,
+        # 'job_name': test_job,
         'job_args': list_many_of_args
     }
     PoolExecutor(**exec_dict)
+
+
+if __name__ == "__main__":
+    run_job_with_pool_executor()

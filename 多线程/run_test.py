@@ -3,7 +3,7 @@ import sys
 
 import datetime
 
-from jobs import testjob, test_get_url
+from jobs import test_job, test_get_url
 
 PY3 = sys.version_info[0] == 3
 
@@ -11,7 +11,6 @@ if PY3:
     import concurrent.futures as futures
 else:
     import concurrent.futures as futures
-
 
 
 def PoolExecutor(*args, **kwargs):
@@ -110,6 +109,7 @@ def ThreadExecutor2(*args, **kwargs):
     with futures.ThreadPoolExecutor(max_workers=max_workers) as executor:
         for future in executor.map(kwargs.get('job_name'), data):
             print(future)
+
 
 def ProcessExecutor(*args, **kwargs):
     max_workers = kwargs.get('max_workers', None)

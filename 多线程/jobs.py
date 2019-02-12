@@ -3,7 +3,8 @@ import datetime
 import requests
 import time
 
-def testjob(*args):
+
+def test_job(*args):
     start_time = datetime.datetime.now()
     time.sleep(2)
     print(args)
